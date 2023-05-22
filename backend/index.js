@@ -7,7 +7,7 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use(cors())
  
-mongoose.connect("mongodb://localhost:27017/myLoginRegisterDB",{
+mongoose.connect("",{
     useNewUrlParser:true,
     useUnifiedTopology:true
 },()=>{
@@ -42,30 +42,23 @@ app.post("/login",(req,res)=>{
         }
     })
 })
-app.post("/register",(req,res)=>{
+app.post("/register",async (req,res)=>{
     //res.send("My API Register")
     const{name,email,password}=req.body
-    User.findOne({email:email},(err,user)=>{
-        if(user){
-            res.send({message:"User alredy registered"})
-        }
-        else{
-            const user=new User({
-                name,
-                email,
-                password
-            })
-            user.save(err=>{ //save()
-                if(err){
-                    res.send(err)
-                }
-                else{
-                    res.send({message:"Successfully Registed try to login"})
-                }
-            })
-        }
+    const usr = await User.findOne({email:email})
+    if (usr){
+        return res.send("User Alredy Registered")
+    }
+    const user=new User({
+        name:name,
+        email:email,
+        password:password
     })
-    
+    await user.save()
+    res.send({
+        message:"User Created",
+        data:user
+    })
 })
 app.listen(9002,()=>{
     console.log("BE started at port 9002")

@@ -21,12 +21,17 @@ const  Register = ()=>{
     }
     const register = () =>{
         const {name,email,password,reEnterPassword}=user
+        const body={
+            name:name,
+            email:email,
+            password:password
+        }
         if (name && email && password && ( password === reEnterPassword)){
             alert("Registered")
-            axios.post("http://localhost:9002/register",user)
+            axios.post("http://localhost:9002/register",body)
             .then( res=> {
                 alert(res.data.message)
-                history.push("/login")
+                history.push("/")
             })
         }
         else{
@@ -44,7 +49,7 @@ const  Register = ()=>{
             <input type="password" name="reEnterPassword" value={user.reEnterPassword} placeholder="Confirm Password" onChange={handleChange}></input>
             <div className="button" onClick={register}>Register</div>
             <div>or</div>
-            <div className="button" onClick={()=> history.push("/login")}>Login</div>
+            <div className="button" onClick={()=> history.push("/")}>Login</div>
         </div>
     )
 }

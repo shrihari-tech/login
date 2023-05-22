@@ -2,29 +2,27 @@ import './App.css';
 import Homepage from './components/homepage/homepage'
 import Login from './components/login/login'
 import Register from './components/register/register';
-import{BrowserRouter as Router,Route,Switch } from "react-router-dom";
+import{BrowserRouter as Router,Route } from "react-router-dom";
 import {useState} from 'react';
+import Main from './components/Main/main';
 function App() {
   const[user,setLoginUser]=useState({})
   return (
     <div className="App">
       <Router>
-        <Switch>
           <Route exact path="/">
-            {
-              //user && user._id ?<Homepage />:<Login setLoginUser={setLoginUser} />
-              user && user._id  ? <Homepage setLoginUser={setLoginUser}/> : <Login setLoginUser={ setLoginUser }/>
-            }
-            <Homepage /></Route>
-          <Route path="/login">
-            <Login setLoginUser={setLoginUser} />
-            </Route>
-          <Route path="/register"><Register /></Route>
-        </Switch>
+            <Login/>
+          </Route>
+          <Route exact path="/register">
+            <Register/>
+          </Route>
+          <Route exact path="/home">
+            <Homepage/>
+          </Route>
+          <Route exact path="/main">
+            <Main/>
+          </Route>
       </Router>
-    {/*  <Homepage />
-      <Login />
-  <Register />*/}
     </div>
   );
 }

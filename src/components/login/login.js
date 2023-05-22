@@ -1,10 +1,15 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import "./login.css"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
 
 const Login = ({setLoginUser})=>{
     const history = useHistory()
+    useEffect(()=>{
+        if(localStorage.getItem("data")){
+            history.push("/home")
+        }
+    },[])
     const [ user,setUser] = useState({
         email:"",
         password:"",
@@ -20,11 +25,15 @@ const Login = ({setLoginUser})=>{
     }
 
     const login=()=>{
-        axios.post("http://localhost:9002/login",user)
+        const body={
+            email:user.email,
+            password:user.password
+        }
+        axios.post("http://localhost:9002/login",body)
         .then(res => {
             alert(res.data.message)
-            setLoginUser(res.data.user)
-            history.push("/")
+            localStorage.setItem("data",res.data.user._id)
+            history.push("/home")
         })
     }
     return(

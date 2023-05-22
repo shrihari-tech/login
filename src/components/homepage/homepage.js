@@ -1,79 +1,134 @@
-import React from "react"
+import React,{useState} from "react";
+import { useHistory } from "react-router-dom"
+import { EXCEL_FILE_BASE64 } from "./constants";
+import FileSaver from 'file-saver';
 import "./homepage.css"
+import Select from 'react-select';
 
-const Homepage = ()=>{
+
+const Homepage = (props)=>{
+  //console.log(props)
+    const [sem2,setSem] = useState()
+    const [dept2,setDept] = useState()
+    const history=useHistory()
+    const handleDownload = ()=>{
+        let sliceSize = 1024;
+        let byteCharacters = atob(EXCEL_FILE_BASE64);
+        let byteLength= byteCharacters.length;
+        let sliceCount = Math.ceil(byteLength/sliceSize);
+        let byteArrays = new Array(sliceCount);
+        for(let sliceIndex =0;sliceIndex<sliceCount;++sliceIndex){
+          let begin = sliceIndex * sliceSize;
+          let end = Math.min(begin+sliceSize,byteLength);
+          let bytes = new Array(end-begin);
+          for(var offset = begin,i=0;offset<end;++i,++offset){
+            bytes[i]=byteCharacters[offset].charCodeAt(0);
+          }
+          byteArrays[sliceIndex] = new Uint8Array(bytes);
+        }
+        let blob = new Blob(byteArrays,{type:'application/vnd.ms-excel'});
+        FileSaver.saveAs(new Blob([blob],{}),'format.xlsx');
+      };
+      const dept=[
+        {
+          value:1,
+          label:"CSE A"
+        },
+        {
+          value:2,
+          label:"CSE B"
+        },
+        {
+          value:3,
+          label:"IT"
+        },
+        {
+          value:4,
+          label:"ECE"
+        },
+        {
+          value:5,
+          label:"AI & DS"
+        },
+        {
+          value:6,
+          label:"MECH"
+        },
+        {
+          value:7,
+          label:"CS & DS"
+        }
+      ];
+      const sem=[
+        {
+          value:1,
+          label:"1st sem"
+        },
+        {
+          value:2,
+          label:"2nd sem"
+        },
+        {
+          value:3,
+          label:"3rd sem"
+        },
+        {
+          value:4,
+          label:"4th sem"
+        },
+        {
+          value:5,
+          label:"5th sem"
+        },
+        {
+          value:6,
+          label:"6th sem"
+        },
+        {
+          value:7,
+          label:"7th sem"
+        },
+        {
+          value:8,
+          label:"8th sem"
+        }
+      ];
+
+      const handleChange = (selectedOption) => {
+        setDept(selectedOption);
+        console.log(selectedOption.label)
+      };
+      
+      const handle1Change = (selectedOption) => {
+        setSem(selectedOption);
+        console.log(selectedOption.label)
+      };
+
+
+
     return(
         <div className="homepage">
-            <div className="button">Logout</div>
-            <div class="cgpa_container">
-                <div class="cgpa_ttitle"><h4>CGPA Calculator</h4></div>
-                <input type="text" id ="first-gpa" placeholder="1st-semester"></input>
-                <input type="text" id="two-gpa" placeholder="2nd-semester"></input>
-                <input type="text" id="three-gpa" placeholder="3rd-semester"></input>
-                <input type="text" id="four-gpa" placeholder="4th-semester"></input>
-                <input type="text" id="five-gpa" placeholder="5th-semester"></input>
-                <input type="text" id="six-gpa" placeholder="6th-semester"></input>
-                <input type="text" id="seven-gpa" placeholder="7th-semester"></input>
-                <input type="text" id="eight-gpa" placeholder="8th-semester"></input>
-                <div class="cgpa_output">
-                    <h1>Total CGPA=</h1>
-                    <button id="btn_re">
-                            Reset
-                    </button>
-                    <button id="btn_sub" onclick="myFunction()">
-                    submit
-                    </button>
-                </div>
+          <div className="dept">Dept<br/>
+            <Select options={dept} onChange={handleChange} value={dept2} />
+          </div>
+          <div className="sem">Semster<br/>
+            <Select options={sem} onChange={handle1Change} value={sem2}   />
+          </div>
+            <div className="button" onClick={()=>{
+                localStorage.removeItem("data")
+                history.push("/")
+                }}>Logout
             </div>
-            <script src="calculate.js">
-
-                function myFunction(){
-                    /*document.querySelector('#btn_sub').addEventListener('click',()=>{
-                        let first_gpa=document.querySelector('#first-gpa').value;
-                        let first_gpa_per=(first_gpa/100)*5;
-                        let first_gpa_per_result=first_gpa_per.toPrecision(3);
-                        
-                        let two_gpa=document.querySelector('#two-gpa').value;
-                        let two_gpa_per=(two_gpa/100)*5;
-                        let two_gpa_per_result=two_gpa_per.toPrecision(3);
-                        
-                        let three_gpa=document.querySelector('#three-gpa').value;
-                        let three_gpa_per=(three_gpa/100)*5;
-                        let three_gpa_per_result=three_gpa_per.toPrecision(3);
-
-                        let foure_gpa=document.querySelector('#foure-gpa').value;
-                        let foure_gpa_per=(foure_gpa/100)*5;
-                        let foure_gpa_per_result=foure_gpa_per.toPrecision(3);
-
-                        let five_gpa=document.querySelector('#five-gpa').value;
-                        let five_gpa_per=(five_gpa/100)*5;
-                        let five_gpa_per_result=five_gpa_per.toPrecision(3);
-
-                        let six_gpa=document.querySelector('#six-gpa').value;
-                        let six_gpa_per=(six_gpa/100)*5;
-                        let six_gpa_per_result=six_gpa_per.toPrecision(3);
-
-                        let seven_gpa=document.querySelector('#seven-gpa').value;
-                        let seven_gpa_per=(seven_gpa/100)*5;
-                        let seven_gpa_per_result=seven_gpa_per.toPrecision(3);
-
-                        let eight_gpa=document.querySelector('#eight-gpa').value;
-                        let eight_gpa_per=(eight_gpa/100)*5;
-                        let eight_gpa_per_result=eight_gpa_per.toPrecision(3);
-
-                        let total=
-                        parseFloat(first_gpa_per_result)+parseFloat(two_gpa_per_result)+parseFloat(three_gpa_per_result)+parseFloat(foure_gpa_per_result)+
-                        parseFloat(five_gpa_per_result)+parseFloat(six_gpa_per_result)+parseFloat(seven_gpa_per_result)+parseFloat(eight_gpa_per_result);
-
-                        let total_cgpa=total.toPrecision(3);
-                        document.querySelector('.cgpa_output h1').innerHTML=`TOTAL CGPA=${total_cgpa}`
-                    })*/
-
-                }
-            </script>
+            <button className="format" onClick={()=>{
+              //handleDownload()
+              //history.push(`/main?dept=${dept2.label}$sem=${sem2.label}`);
+              history.push(`/main?dept=${dept2.label}&sem=${sem2.label}`);
+            }}>
+                Submit
+            </button>
         </div>
         
-        
+        //input type='file'
     )
 }
 export default Homepage
